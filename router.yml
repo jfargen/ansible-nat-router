@@ -37,6 +37,13 @@
        state: enabled
        permanent: true
        zone: dmz
+  - name: firewalld
+       firewalld:
+       name: firewalld
+       zone: internal
+       interface: ens4
+       permanent: true
+       state: enabled
   - name: nmcli
     nmcli:
        conn_name: internal
