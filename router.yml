@@ -1,0 +1,46 @@
+---
+- hosts: [router]
+  remote_user: root
+  tasks:
+  - name: Firewalld
+    yum:
+       name:
+          - firewalld
+          - python2-libselinux
+          - python3-libselinux
+          - python3-firewall
+          - nm-connection-editor.x86_64
+          - libsemanage-python
+          - policycoreutils-python
+       state: present
+  - name: sysctl
+    sysctl:
+       name: net.ipv4.ip_forward
+       value: 1
+       sysctl_set: yes
+       state: present
+       reload: yes
+  - name: systemd
+    systemd:
+       name: firewalld
+       enabled: yes
+       state: started
+  - name: firewalld
+    firewalld:
+       zone: dmz
+       interface: ens3
+       permanent: true
+       state: enabled
+  - name: firewalld  
+    firewalld:
+       masquerade: yes
+       state: enabled
+       permanent: true
+       zone: dmz
+  - name: nmcli
+    nmcli:
+       conn_name: internal
+       ifname: ens4
+       type: ethernet
+       ip4: 172.16.24.254/24
+       state: present
